@@ -38,6 +38,17 @@
   - [5.9. Registrar o serviço do Repositório na classe Startup.cs](#59-registrar-o-serviço-do-repositório-na-classe-startupcs)
   - [Criar o Dockerfile de Basket.API](#criar-o-dockerfile-de-basketapi)
   - [Ajustar o Docker-compose para os novos contêiners](#ajustar-o-docker-compose-para-os-novos-contêiners)
+- [Projeto API.Discount](#projeto-apidiscount)
+  - [Criar o Projeto](#criar-o-projeto)
+  - [Adicionar na Solution](#adicionar-na-solution)
+  - [Inserir os Pacotes Npgsql e Dapper](#inserir-os-pacotes-npgsql-e-dapper)
+  - [Criar a pasta Entities](#criar-a-pasta-entities)
+  - [Criar a Pasta Repositories](#criar-a-pasta-repositories)
+    - [Criar Interface IDiscountRepository](#criar-interface-idiscountrepository)
+    - [Criar a Classe DiscountRepository](#criar-a-classe-discountrepository)
+  - [Configurar string de conexão no appsettings.json](#configurar-string-de-conexão-no-appsettingsjson)
+  - [Criando DiscountController.cs](#criando-discountcontrollercs)
+  - [Configurando a Classe Startup.cs](#configurando-a-classe-startupcs)
     
 ----
 
@@ -518,7 +529,7 @@ Esse comando vai iniciar os contêiners, você deve ser capaz de executar os com
 # 5. Projeto Basket.API
 <br>
 
-API em ASPNET Core com banco de dados Redis
+API para cesta de compras em ASPNET Core com banco de dados Redis.
 
 ----
 
@@ -866,3 +877,244 @@ Para subir todos os contêineres use o comando abaixo:
 É possível acessar o Catalog.API no link: http://localhost:8000/swagger/index.html
 
 ----
+
+# Projeto API.Discount
+<br>
+
+Projeto para criar uma API de Desconto com PostegreSQL e Dapper como ORM.
+
+---
+
+## Criar o Projeto
+<br>
+
+    dotnet new webapi -o Discount.API -f net5.0
+
+-----
+
+## Adicionar na Solution
+<br>
+
+    dotnet sln add .\Discount.API\
+
+----
+
+## Inserir os Pacotes Npgsql e Dapper
+
+Através do NuGet adicionar os seguintes pacotes:
+
+    dotnet add .\Discount.API\ package Npgsql --version 5.0.14
+    dotnet add .\Discount.API\ package Dapper --version 2.0.123
+
+----
+
+## Criar a pasta Entities
+<br>
+
+Criar o diretório Entities e nele a classe "Coupon.cs":
+
+```c#
+    public class Coupon
+    {
+        public int Id { get; set; }
+        public string ProductName { get; set; }
+        public string Description { get; set; }
+        public int Amount { get; set; }
+    }
+```
+
+----
+
+## Criar a Pasta Repositories
+<br>
+
+Criar a pasta Repositories e nele os seguintes arquivos:
+
+--------
+
+### Criar Interface IDiscountRepository
+<br>
+
+```c#
+    public interface IDiscountRepository
+    {
+        Task<Coupon> GetDiscount(string productName);
+        Task<bool> CreateDiscount(Coupon coupon);
+        Task<bool> UpdateDiscount(Coupon coupon);
+        Task<bool> DeleteDiscount(string productName);
+    }
+```
+
+---
+
+### Criar a Classe DiscountRepository
+<br>
+
+```c#
+    //Implementa IDiscountRepository
+    public class DiscountRepository : IDiscountRepository
+    {
+        //Injeção de dependência
+        private readonly IConfiguration _configuration;
+
+        public DiscountRepository(IConfiguration configuration)
+        {
+            _configuration = configuration ?? throw new ArgumentException(nameof(configuration));
+        }
+
+        //Método para acessar o PostgreeSql, usado em todos os outros métodos
+        private NpgsqlConnection GetConnectionPostgreSql()
+        {
+            return new NpgsqlConnection(_configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
+        }
+
+        public async Task<Coupon> GetDiscount(string productName)
+        {
+            NpgsqlConnection connection = GetConnectionPostgreSql();
+
+            //QueryFirstOrDefaultAsync<>() método do Dapper
+            var coupon = await connection.QueryFirstOrDefaultAsync<Coupon>
+                ("SELECT * FROM Coupon WHERE ProductName = @ProductName", 
+                new {ProductName = productName});
+
+            //Se Não existir o Cupom ele cria um novo
+            if(coupon is null)
+                return new Coupon
+                {ProductName = "No Discount", Amount = 0, Description = "No Discount Desc"};
+
+            //Retorna o cumpom (se existir)
+            return coupon;
+        }
+
+
+        public async Task<bool> CreateDiscount(Coupon coupon)
+        {
+            NpgsqlConnection connection = GetConnectionPostgreSql();
+
+             //ExecuteAsync<>() método do Dapper
+            var affected = await connection.ExecuteAsync
+                ("INSERT INTO Coupon (ProductName, Description, Amount) VALUES (@ProductName, @Description, @Amount)",
+                new { ProductName = coupon.ProductName, Description = coupon.Description, Amount = coupon.Amount});
+
+            if(affected is 0)
+                return false;
+
+            return true;
+        }
+
+        public async Task<bool> UpdateDiscount(Coupon coupon)
+        {
+            NpgsqlConnection connection = GetConnectionPostgreSql();
+
+            var affected = await connection.ExecuteAsync
+                ("UPDATE Coupon SET ProductName=@ProductName, Description=@Description, Amount=@Amount WHERE Id = @Id",
+                new { ProductName = coupon.ProductName,
+                    Description = coupon.Description, 
+                    Amount = coupon.Amount});
+
+            if(affected is 0)
+                return false;
+
+            return true;
+        }
+
+        public async Task<bool> DeleteDiscount(string productName)
+        {
+            NpgsqlConnection connection = GetConnectionPostgreSql();
+
+            var affected = await connection.ExecuteAsync
+                ("DELETE FROM Coupon WHERE ProductName=@ProductName",
+                new { ProductName = productName});
+
+            if(affected is 0)
+                return false;
+
+            return true;
+        }
+    }
+```
+
+---
+
+## Configurar string de conexão no appsettings.json
+<br>
+
+No arquivo appsettings.json:
+
+```json
+{
+  //Adicionar o bloco abaixo  
+  "DatabaseSettings": {
+    "ConnectionString": "Server=localhost;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
+  },
+  //Restante do código...
+}
+```
+
+----
+
+## Criando DiscountController.cs
+<br>
+
+No diretório Discount.API/Controllers criar a classe DiscountController:
+
+```c#
+    [Route("api/v1/[controller]")]
+    [ApiController]
+    public class DiscountController : ControllerBase
+    {
+        //Injeção do repositório
+        private readonly IDiscountRepository _repository;
+
+        public DiscountController(IDiscountRepository repository)
+        {
+            _repository = repository;
+        }
+
+        [HttpGet("{productName}", Name = "GetDiscount")]
+        public async Task<ActionResult<Coupon>> GetDicount(string productName)
+        {
+            var coupon = await _repository.GetDiscount(productName);
+            return Ok(coupon);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Coupon>> CreateDiscount([FromBody] Coupon coupon)
+        {
+            await _repository.CreateDiscount(coupon);
+            return CreatedAtRoute("GetDiscount", new {productName = coupon.ProductName}, coupon);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Coupon>> UpdateDiscount([FromBody] Coupon coupon)
+        {
+            return Ok(await _repository.UpdateDiscount(coupon));
+        }
+
+        [HttpDelete("{productName}", Name = "DeleteDiscount")]
+        public async Task<ActionResult<Coupon>> DeleteDiscount(string productName)
+        {
+            return Ok(await _repository.DeleteDiscount(productName));
+        }
+    }
+```
+
+----
+
+## Configurando a Classe Startup.cs
+<br>
+
+Na classe Startup.cs incluir o serviço do IDiscountRepository:
+
+```c#
+        public void ConfigureServices(IServiceCollection services)
+        {
+            //Incluir a linha abaixo:
+            services.AddScoped<IDiscountRepository, DiscountRepository>();
+           //Restante do código...
+        }
+
+```
+
+---
+

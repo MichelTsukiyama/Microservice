@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KMw55tXtRhEQS2XjT2HugwVClQtdsrLoMVVMubdCxhfU44u9fg0/LWJeNOuWOefSIZSdu7FVKCohOUwVU89xBA==",
+  "dgSpecHash": "1Wj3anPEgTuF7/vqOzACpmCM7y5oUj1HI4DuAzexW6LDfQw1diZD2kUQbYIoo/X7HMM5+eMwhpIebkAssxfvSA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj",
+  "projectFilePath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\miche\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\miche\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\5.0.0\\microsoft.extensions.caching.abstractions.5.0.0.nupkg.sha512",

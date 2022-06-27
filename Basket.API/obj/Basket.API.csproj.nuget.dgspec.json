@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj": {}
+    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj": {
+    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj",
+        "projectUniqueName": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj",
         "projectName": "Basket.API",
-        "projectPath": "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj",
+        "projectPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\Basket.API.csproj",
         "packagesPath": "C:\\Users\\miche\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\obj\\",
+        "outputPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Basket.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Catalog.API\\Catalog.API.csproj": {}
+    "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj": {}
   },
   "projects": {
-    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Catalog.API\\Catalog.API.csproj": {
+    "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Catalog.API\\Catalog.API.csproj",
-        "projectName": "Catalog.API",
-        "projectPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Catalog.API\\Catalog.API.csproj",
+        "projectUniqueName": "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj",
+        "projectName": "Discount.API",
+        "projectPath": "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj",
         "packagesPath": "C:\\Users\\miche\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Catalog.API\\obj\\",
+        "outputPath": "C:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -44,9 +44,13 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
-            "MongoDB.Driver": {
+            "Dapper": {
               "target": "Package",
-              "version": "[2.16.0, )"
+              "version": "[2.0.123, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[5.0.14, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
