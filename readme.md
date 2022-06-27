@@ -36,19 +36,23 @@
     - [5.7.2. BasketRepository](#572-basketrepository)
   - [5.8. BasketController](#58-basketcontroller)
   - [5.9. Registrar o serviço do Repositório na classe Startup.cs](#59-registrar-o-serviço-do-repositório-na-classe-startupcs)
-  - [Criar o Dockerfile de Basket.API](#criar-o-dockerfile-de-basketapi)
-  - [Ajustar o Docker-compose para os novos contêiners](#ajustar-o-docker-compose-para-os-novos-contêiners)
-- [Projeto API.Discount](#projeto-apidiscount)
-  - [Criar o Projeto](#criar-o-projeto)
-  - [Adicionar na Solution](#adicionar-na-solution)
-  - [Inserir os Pacotes Npgsql e Dapper](#inserir-os-pacotes-npgsql-e-dapper)
-  - [Criar a pasta Entities](#criar-a-pasta-entities)
-  - [Criar a Pasta Repositories](#criar-a-pasta-repositories)
-    - [Criar Interface IDiscountRepository](#criar-interface-idiscountrepository)
-    - [Criar a Classe DiscountRepository](#criar-a-classe-discountrepository)
-  - [Configurar string de conexão no appsettings.json](#configurar-string-de-conexão-no-appsettingsjson)
-  - [Criando DiscountController.cs](#criando-discountcontrollercs)
-  - [Configurando a Classe Startup.cs](#configurando-a-classe-startupcs)
+  - [5.10. Criar o Dockerfile de Basket.API](#510-criar-o-dockerfile-de-basketapi)
+  - [5.11. Ajustar o Docker-compose para os novos contêiners](#511-ajustar-o-docker-compose-para-os-novos-contêiners)
+- [6. Projeto API.Discount](#6-projeto-apidiscount)
+  - [6.1. Criar o Projeto](#61-criar-o-projeto)
+  - [6.2. Adicionar na Solution](#62-adicionar-na-solution)
+  - [6.3. Inserir os Pacotes Npgsql e Dapper](#63-inserir-os-pacotes-npgsql-e-dapper)
+  - [6.4. Criar a pasta Entities](#64-criar-a-pasta-entities)
+  - [6.5. Criar a Pasta Repositories](#65-criar-a-pasta-repositories)
+    - [6.5.1. Criar Interface IDiscountRepository](#651-criar-interface-idiscountrepository)
+    - [6.5.2. Criar a Classe DiscountRepository](#652-criar-a-classe-discountrepository)
+  - [6.6. Configurar string de conexão no appsettings.json](#66-configurar-string-de-conexão-no-appsettingsjson)
+  - [6.7. Criando DiscountController.cs](#67-criando-discountcontrollercs)
+  - [6.8. Configurando a Classe Startup.cs](#68-configurando-a-classe-startupcs)
+  - [Adicionar o Dockerfile](#adicionar-o-dockerfile)
+  - [Atualizando os arquivos docker-compose](#atualizando-os-arquivos-docker-compose)
+    - [docker-compose.yml](#docker-composeyml)
+    - [docker-compose.override.yml](#docker-composeoverrideyml)
     
 ----
 
@@ -789,13 +793,13 @@ services.AddScoped<IBasketRepository, BasketRepository>();
 
 ----
 
-## Criar o Dockerfile de Basket.API
+## 5.10. Criar o Dockerfile de Basket.API
 
 Pressione F1, digite docker add e adicione o Dockerfile ao projeto Basket.API
 
 ----
 
-## Ajustar o Docker-compose para os novos contêiners
+## 5.11. Ajustar o Docker-compose para os novos contêiners
 
 No docker-compose serão adicionados os contêineres do Redis e Basket.API, os arquivos devem ser alterados da seguinte-maneira:
 
@@ -878,28 +882,28 @@ Para subir todos os contêineres use o comando abaixo:
 
 ----
 
-# Projeto API.Discount
+# 6. Projeto API.Discount
 <br>
 
 Projeto para criar uma API de Desconto com PostegreSQL e Dapper como ORM.
 
 ---
 
-## Criar o Projeto
+## 6.1. Criar o Projeto
 <br>
 
     dotnet new webapi -o Discount.API -f net5.0
 
 -----
 
-## Adicionar na Solution
+## 6.2. Adicionar na Solution
 <br>
 
     dotnet sln add .\Discount.API\
 
 ----
 
-## Inserir os Pacotes Npgsql e Dapper
+## 6.3. Inserir os Pacotes Npgsql e Dapper
 
 Através do NuGet adicionar os seguintes pacotes:
 
@@ -908,7 +912,7 @@ Através do NuGet adicionar os seguintes pacotes:
 
 ----
 
-## Criar a pasta Entities
+## 6.4. Criar a pasta Entities
 <br>
 
 Criar o diretório Entities e nele a classe "Coupon.cs":
@@ -925,14 +929,14 @@ Criar o diretório Entities e nele a classe "Coupon.cs":
 
 ----
 
-## Criar a Pasta Repositories
+## 6.5. Criar a Pasta Repositories
 <br>
 
 Criar a pasta Repositories e nele os seguintes arquivos:
 
 --------
 
-### Criar Interface IDiscountRepository
+### 6.5.1. Criar Interface IDiscountRepository
 <br>
 
 ```c#
@@ -947,7 +951,7 @@ Criar a pasta Repositories e nele os seguintes arquivos:
 
 ---
 
-### Criar a Classe DiscountRepository
+### 6.5.2. Criar a Classe DiscountRepository
 <br>
 
 ```c#
@@ -1036,7 +1040,7 @@ Criar a pasta Repositories e nele os seguintes arquivos:
 
 ---
 
-## Configurar string de conexão no appsettings.json
+## 6.6. Configurar string de conexão no appsettings.json
 <br>
 
 No arquivo appsettings.json:
@@ -1053,7 +1057,7 @@ No arquivo appsettings.json:
 
 ----
 
-## Criando DiscountController.cs
+## 6.7. Criando DiscountController.cs
 <br>
 
 No diretório Discount.API/Controllers criar a classe DiscountController:
@@ -1101,7 +1105,7 @@ No diretório Discount.API/Controllers criar a classe DiscountController:
 
 ----
 
-## Configurando a Classe Startup.cs
+## 6.8. Configurando a Classe Startup.cs
 <br>
 
 Na classe Startup.cs incluir o serviço do IDiscountRepository:
@@ -1117,4 +1121,91 @@ Na classe Startup.cs incluir o serviço do IDiscountRepository:
 ```
 
 ---
+
+## Adicionar o Dockerfile
+<br>
+
+Usando a extensão do Docker, aperte F1, digite docker add, e crie Dockerfile para o projeto Discount.API.
+
+---
+
+## Atualizando os arquivos docker-compose
+<br>
+
+Aqui os arquivos serão atualizados para configurar e subir os contêineres da Discount.API, do PostgreSQL e do pgadmin4(ferramenta para administrar o PostegreSQL):
+
+### docker-compose.yml
+<br>
+
+```docker
+# Acrescentar em services:
+# São as imagens usadas pelo discount.api, postgreSQL e pgadmin4.
+services:
+
+  discountdb:
+    image: postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+    
+  discount.api:
+    image: discountapi
+    build:
+      context: .
+      dockerfile: Discount.API/Dockerfile
+
+# Acrescentar  em  volumes:
+# Esses volumes vão armazenar os dados do PostegreSQL e do pgadmin4.
+  volumes:
+    
+    postgres_data:
+    pgadmin_data:
+```
+
+----
+
+### docker-compose.override.yml
+<br>
+
+```docker
+#Acrescentar os contêiners discountdb, pgadmin e discount.api no services:
+services:
+  
+  discountdb:
+    container_name: discountdb
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin1234
+      - POSTGRES_DB=Discountdb
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  pgadmin:
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@teste.com
+      - PGADMIN_DEFAULT_PASSWORD=admin1234
+    restart: always
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+
+  discount.api:
+    container_name: discountapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
+    depends_on:
+      - discountdb
+    ports:
+      - "8002:80"
+```
+Utilize o comando abaixo para subir os contêineres:
+
+    docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+----
 
