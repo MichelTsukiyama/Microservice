@@ -49,10 +49,26 @@
   - [6.6. Configurar string de conexão no appsettings.json](#66-configurar-string-de-conexão-no-appsettingsjson)
   - [6.7. Criando DiscountController.cs](#67-criando-discountcontrollercs)
   - [6.8. Configurando a Classe Startup.cs](#68-configurando-a-classe-startupcs)
-  - [Adicionar o Dockerfile](#adicionar-o-dockerfile)
-  - [Atualizando os arquivos docker-compose](#atualizando-os-arquivos-docker-compose)
-    - [docker-compose.yml](#docker-composeyml)
-    - [docker-compose.override.yml](#docker-composeoverrideyml)
+  - [6.9. Adicionar o Dockerfile](#69-adicionar-o-dockerfile)
+  - [6.10. Atualizando os arquivos docker-compose](#610-atualizando-os-arquivos-docker-compose)
+    - [6.10.1. docker-compose.yml](#6101-docker-composeyml)
+    - [6.10.2. docker-compose.override.yml](#6102-docker-composeoverrideyml)
+  - [6.11. Criando a tabela Coupon no PostgreSQL](#611-criando-a-tabela-coupon-no-postgresql)
+- [7. gRPC (Google Remote Procedure Call)](#7-grpc-google-remote-procedure-call)
+  - [7.1. Diferenças entre API REST e gRPC](#71-diferenças-entre-api-rest-e-grpc)
+- [8. Projeto Discount.Grpc](#8-projeto-discountgrpc)
+  - [8.1. Criando o Projeto](#81-criando-o-projeto)
+  - [Adicionando na Solution](#adicionando-na-solution)
+  - [Instalar os pacotes NuGet (Npgsql e Dapper)](#instalar-os-pacotes-nuget-npgsql-e-dapper)
+  - [Copiar a pasta Entities](#copiar-a-pasta-entities)
+  - [Copiar a pasta Repositories](#copiar-a-pasta-repositories)
+  - [Copiar a ConnectionString](#copiar-a-connectionstring)
+  - [Registrar o serviço para o Repositório na Startup.cs](#registrar-o-serviço-para-o-repositório-na-startupcs)
+  - [Criar o arquivo Discount.proto](#criar-o-arquivo-discountproto)
+  - [Automapper](#automapper)
+  - [Criar a classe DiscountService](#criar-a-classe-discountservice)
+  - [Atualizar o endpoint na classe Startup:](#atualizar-o-endpoint-na-classe-startup)
+  - [](#)
     
 ----
 
@@ -1122,19 +1138,19 @@ Na classe Startup.cs incluir o serviço do IDiscountRepository:
 
 ---
 
-## Adicionar o Dockerfile
+## 6.9. Adicionar o Dockerfile
 <br>
 
 Usando a extensão do Docker, aperte F1, digite docker add, e crie Dockerfile para o projeto Discount.API.
 
 ---
 
-## Atualizando os arquivos docker-compose
+## 6.10. Atualizando os arquivos docker-compose
 <br>
 
 Aqui os arquivos serão atualizados para configurar e subir os contêineres da Discount.API, do PostgreSQL e do pgadmin4(ferramenta para administrar o PostegreSQL):
 
-### docker-compose.yml
+### 6.10.1. docker-compose.yml
 <br>
 
 ```docker
@@ -1164,7 +1180,7 @@ services:
 
 ----
 
-### docker-compose.override.yml
+### 6.10.2. docker-compose.override.yml
 <br>
 
 ```docker
@@ -1207,5 +1223,306 @@ services:
 Utilize o comando abaixo para subir os contêineres:
 
     docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+
 ----
+
+## 6.11. Criando a tabela Coupon no PostgreSQL
+<br>
+
+1. Acesse o contêiner do pgAdmin : http://localhost:5050/login?next=%2F
+2. Insira as credenciais que foram configuradas no docker-compose e clique em login:
+
+        admin@teste.com
+        admin1234
+
+3. Selecione "Add New Server";
+4. Insira em General, o nome ***DiscountServer***;
+5. Em Connection coloque o host name/address como ***DiscountDb*** ;
+6. Em Connection coloque o username como ***admin*** ;
+7. Em Connection coloque o password como ***admin1234*** ;
+8. Clique em "Salvar";
+9. Acesse o banco de dados criado (DiscountDb)
+
+<center>
+
+![coupon-table](src/Coupon-table.png)
+
+</center>
+
+10. Insira os comandos abaixo:
+
+```sql
+CREATE TABLE  Coupon (Id SERIAL PRIMARY KEY,
+                     ProductName VARCHAR(24) NOT NULL,
+                     Description TEXT,
+                     Amount INT);
+```
+11. Execute os comandos apertando o botão "execute" ou aperte F5;
+12. Dê um "refresh" na tabela e veja que a mesma foi criada;
+13. (Opcional) Inserir produtos para testar a API:
+    
+    ```sql
+    INSERT INTO Coupon(ProductName, Description, Amount)VALUES('Caderno','Caderno Espiral', 5);
+    ```
+
+Agora já é possível ver o produto na tabela tanto pelo pgAdmin quanto pelo método Get da Discount.API;
+
+http://localhost:8002/swagger/index.html (Discount.API)
+
+----
+
+# 7. gRPC (Google Remote Procedure Call)
+<br>
+
+É uma arquitetura **RPC** de código aberto criada pelo Google para obter comunicação de alta velocidade entre microsserviços. Permite integração de microsserviços programados em diferentes linguagens.
+
+Usa o formato de mensagem **protobuf**(buffers de protoclo), que fornece um formato de serialização altamente eficiente e com neutralidade de plataforma para serializar mensagens estruturadas que os serviços enviam entre si.
+
+Oferece suporte abrangente entre as pilhas de desenvolvimento mais populares: Java, JavaScript, C#, go, Swift e NodeJS.
+
+As APIs baseadas em RPC são ótimas para ações, ou seja, procedimentos ou comandos. Pode ser uma alternativa mais eficiente do que as APIs Rest
+
+----
+
+## 7.1. Diferenças entre API REST e gRPC
+<br>
+
+- Formato de mensagem **Protobuf** ao invés de JSON/XML;
+- Construído em **HTTP 2** em vez de HTTP 1.1;
+- Gera código nativo em vez de usar ferramentas de terceiros;
+- Transmissão de mensagens **muitas vezes mais rápida**;
+- **Implementação mais lenta** do que o REST.
+
+> O gRPC ainda não foi amplamente adotado e a maioria das ferramentas de terceiros continua sem recursos para compatibilidade do gRPC.
+
+---
+
+# 8. Projeto Discount.Grpc
+<br>
+
+Esse projeto vai construir uma API com padrão gRPC, que utiliza o HTTP2 ao invés do HTTP 1.1 e possui troca de mensagens mais eficientes.
+
+>O .Net implementou o uso do grpc no sdk 3.0
+
+----
+
+## 8.1. Criando o Projeto
+<br>
+
+    dotnet new grpc -o Discount.Grpc -F net5.0
+
+-----
+
+## Adicionando na Solution
+<br>
+
+    dotnet sln add .\Discount.Grpc\
+----
+
+## Instalar os pacotes NuGet (Npgsql e Dapper)
+<br>
+
+    dotnet add .\Discount.Grpc\ package Npgsql --version 5.0.14
+    dotnet add .\Discount.Grpc\ package Dapper --version 2.0.123
+
+----
+
+## Copiar a pasta Entities
+<br>
+
+Copiar a pasta Entities de Discount.API alterando os namespaces para Discount.Grpc
+
+----
+
+## Copiar a pasta Repositories
+<br>
+
+Copiar a pasta Repositories de Discount.API alterando os namespaces para Discount.Grpc    
+
+----
+
+## Copiar a ConnectionString 
+<br>
+
+Copiar ConnectionString de Discount.API/appsettings.json para Discount.Grpc/appsettings.json
+
+----
+
+## Registrar o serviço para o Repositório na Startup.cs
+<br>
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+        {
+            //Adicionar esta linha
+            services.AddScoped<IDiscountRepository, DiscountRepository>();
+            services.AddGrpc();
+        }
+```
+----
+
+## Criar o arquivo Discount.proto
+<br>
+
+No diretório Discount.Grpc/Protos crie o arquivo "Discount.proto".
+Remova o arquivo existente greet.proto;
+
+```proto
+syntax = "proto3";
+
+option csharp_namespace = "Discount.Grpc.Protos";
+
+service DiscountProtoService{
+    rpc GetDiscount(GetDiscountRequest) returns (CouponModel);
+
+    rpc CreateDiscount(CreateDiscountRequest) returns (CouponModel);
+    rpc UpdateDiscount(UpdateDiscountRequest) returns (CouponModel);
+    rpc DeleteDiscount(DeleteDiscountRequest) returns (DeleteDiscountResponse);
+}
+
+message GetDiscountRequest{
+    string productName = 1;
+}
+
+message CouponModel{
+    int32 id = 1;
+    string productName = 2;
+    string description = 3;
+    int32 amount = 4;
+}
+
+message CreateDiscountRequest{
+    CouponModel coupon = 1;
+}
+
+message UpdateDiscountRequest{
+    CouponModel coupon = 1;
+}
+```
+
+----
+
+## Automapper
+<br>
+
+1. Instalando o pacote:
+
+    dotnet add .\Discount.Grpc\ package AutoMapper.Extensions.Microsoft.DependencyInjection --version 8.1.1
+
+2. No diretório Discount.Grpc criar a pasta Mapper;
+3. Criar a classe DiscountProfile:
+
+```c#
+    public class DiscountProfile : Profile
+    {
+        public DiscountProfile()
+        {
+            CreateMap<Coupon, CouponModel>().ReverseMap();
+        }
+    }
+```
+
+4. Adicionar Automapper no ConfigureServices na classe Startup.cs:
+
+```c#
+        public void ConfigureServices(IServiceCollection services)
+        {
+            //restante do código...
+            //adicionar a linha abaixo:
+            services.AddAutoMapper(typeof(Startup));
+            //restante do código...
+        }
+```
+
+----
+
+## Criar a classe DiscountService
+<br>
+
+No diretório Discount.Grpc/Services criar a classe DiscountServices.cs:
+
+```c#
+namespace Discount.Grpc.Services
+{
+    public class DiscountService : DiscountProtoService.DiscountProtoServiceBase
+    {
+        private readonly IDiscountRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<DiscountService> _logger;
+
+        public DiscountService(IDiscountRepository repository, IMapper mapper, ILogger<DiscountService> logger)
+        {
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));;
+        }
+
+        public override async Task<CouponModel> GetDiscount(GetDiscountRequest request, ServerCallContext context)
+        {
+            var coupon = await _repository.GetDiscount(request.ProductName);
+
+            if(coupon == null)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound,
+                    $"Discount with ProductName = {request.ProductName} not found."));
+            }
+
+            _logger.LogInformation("Discount retrieved for ProductName : {productName}, "
+                + "Amount : {amount}", coupon.ProductName, coupon.Amount);
+
+            var couponModel = _mapper.Map<CouponModel>(coupon);
+            return couponModel;
+        }
+
+        public override async Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
+        {
+            var coupon = _mapper.Map<Coupon>(request.Coupon);
+            await _repository.CreateDiscount(coupon);
+
+            var couponModel = _mapper.Map<CouponModel>(coupon);
+            return couponModel;
+        }
+
+        public override async Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
+        {
+           var coupon = _mapper.Map<Coupon>(request.Coupon);
+            await _repository.UpdateDiscount(coupon);
+
+            var couponModel = _mapper.Map<CouponModel>(coupon);
+            return couponModel;
+        }
+
+        public override async Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
+        {
+            var deleted = await _repository.DeleteDiscount(request.ProductName);
+
+            var response = new DeleteDiscountResponse
+            {
+                Success = deleted
+            };
+
+            return response;
+        }
+    }
+}
+```
+
+---
+
+## Atualizar o endpoint na classe Startup:
+<br>
+
+Atualizar o endpoint para DiscountService conforme abaixo:
+
+```c#
+ app.UseEndpoints(endpoints =>
+            {   //Alterar para DiscountService
+                endpoints.MapGrpcService<DiscountService>();
+                //restante do código
+            }
+```
+
+----
+
+## 
 

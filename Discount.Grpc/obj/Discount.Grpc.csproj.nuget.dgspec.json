@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj": {}
+    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.Grpc\\Discount.Grpc.csproj": {}
   },
   "projects": {
-    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj": {
+    "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.Grpc\\Discount.Grpc.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj",
-        "projectName": "Discount.API",
-        "projectPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\Discount.API.csproj",
+        "projectUniqueName": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.Grpc\\Discount.Grpc.csproj",
+        "projectName": "Discount.Grpc",
+        "projectPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.Grpc\\Discount.Grpc.csproj",
         "packagesPath": "C:\\Users\\miche\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.API\\obj\\",
+        "outputPath": "c:\\Users\\miche\\Documents\\work2022\\Microservice\\Discount.Grpc\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -44,17 +44,21 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            },
             "Dapper": {
               "target": "Package",
               "version": "[2.0.123, )"
             },
+            "Grpc.AspNetCore": {
+              "target": "Package",
+              "version": "[2.34.0, )"
+            },
             "Npgsql": {
               "target": "Package",
               "version": "[5.0.14, )"
-            },
-            "Swashbuckle.AspNetCore": {
-              "target": "Package",
-              "version": "[5.6.3, )"
             }
           },
           "imports": [
