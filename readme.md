@@ -58,17 +58,17 @@
   - [7.1. Diferenças entre API REST e gRPC](#71-diferenças-entre-api-rest-e-grpc)
 - [8. Projeto Discount.Grpc](#8-projeto-discountgrpc)
   - [8.1. Criando o Projeto](#81-criando-o-projeto)
-  - [Adicionando na Solution](#adicionando-na-solution)
-  - [Instalar os pacotes NuGet (Npgsql e Dapper)](#instalar-os-pacotes-nuget-npgsql-e-dapper)
-  - [Copiar a pasta Entities](#copiar-a-pasta-entities)
-  - [Copiar a pasta Repositories](#copiar-a-pasta-repositories)
-  - [Copiar a ConnectionString](#copiar-a-connectionstring)
-  - [Registrar o serviço para o Repositório na Startup.cs](#registrar-o-serviço-para-o-repositório-na-startupcs)
-  - [Criar o arquivo Discount.proto](#criar-o-arquivo-discountproto)
-  - [Automapper](#automapper)
-  - [Criar a classe DiscountService](#criar-a-classe-discountservice)
-  - [Atualizar o endpoint na classe Startup:](#atualizar-o-endpoint-na-classe-startup)
-  - [](#)
+  - [8.2. Adicionando na Solution](#82-adicionando-na-solution)
+  - [8.3. Instalar os pacotes NuGet (Npgsql e Dapper)](#83-instalar-os-pacotes-nuget-npgsql-e-dapper)
+  - [8.4. Copiar a pasta Entities](#84-copiar-a-pasta-entities)
+  - [8.5. Copiar a pasta Repositories](#85-copiar-a-pasta-repositories)
+  - [8.6. Copiar a ConnectionString](#86-copiar-a-connectionstring)
+  - [8.7. Registrar o serviço para o Repositório na Startup.cs](#87-registrar-o-serviço-para-o-repositório-na-startupcs)
+  - [8.8. Criar o arquivo Discount.proto](#88-criar-o-arquivo-discountproto)
+  - [8.9. Automapper](#89-automapper)
+  - [8.10. Criar a classe DiscountService](#810-criar-a-classe-discountservice)
+  - [8.11. Atualizar o endpoint na classe Startup:](#811-atualizar-o-endpoint-na-classe-startup)
+  - [8.12. Obs. Passos não concluídos](#812-obs-passos-não-concluídos)
     
 ----
 
@@ -1313,13 +1313,13 @@ Esse projeto vai construir uma API com padrão gRPC, que utiliza o HTTP2 ao inv�
 
 -----
 
-## Adicionando na Solution
+## 8.2. Adicionando na Solution
 <br>
 
     dotnet sln add .\Discount.Grpc\
 ----
 
-## Instalar os pacotes NuGet (Npgsql e Dapper)
+## 8.3. Instalar os pacotes NuGet (Npgsql e Dapper)
 <br>
 
     dotnet add .\Discount.Grpc\ package Npgsql --version 5.0.14
@@ -1327,28 +1327,28 @@ Esse projeto vai construir uma API com padrão gRPC, que utiliza o HTTP2 ao inv�
 
 ----
 
-## Copiar a pasta Entities
+## 8.4. Copiar a pasta Entities
 <br>
 
 Copiar a pasta Entities de Discount.API alterando os namespaces para Discount.Grpc
 
 ----
 
-## Copiar a pasta Repositories
+## 8.5. Copiar a pasta Repositories
 <br>
 
 Copiar a pasta Repositories de Discount.API alterando os namespaces para Discount.Grpc    
 
 ----
 
-## Copiar a ConnectionString 
+## 8.6. Copiar a ConnectionString 
 <br>
 
 Copiar ConnectionString de Discount.API/appsettings.json para Discount.Grpc/appsettings.json
 
 ----
 
-## Registrar o serviço para o Repositório na Startup.cs
+## 8.7. Registrar o serviço para o Repositório na Startup.cs
 <br>
 
 ```c#
@@ -1361,7 +1361,7 @@ public void ConfigureServices(IServiceCollection services)
 ```
 ----
 
-## Criar o arquivo Discount.proto
+## 8.8. Criar o arquivo Discount.proto
 <br>
 
 No diretório Discount.Grpc/Protos crie o arquivo "Discount.proto".
@@ -1402,7 +1402,7 @@ message UpdateDiscountRequest{
 
 ----
 
-## Automapper
+## 8.9. Automapper
 <br>
 
 1. Instalando o pacote:
@@ -1436,7 +1436,7 @@ message UpdateDiscountRequest{
 
 ----
 
-## Criar a classe DiscountService
+## 8.10. Criar a classe DiscountService
 <br>
 
 No diretório Discount.Grpc/Services criar a classe DiscountServices.cs:
@@ -1509,7 +1509,7 @@ namespace Discount.Grpc.Services
 
 ---
 
-## Atualizar o endpoint na classe Startup:
+## 8.11. Atualizar o endpoint na classe Startup:
 <br>
 
 Atualizar o endpoint para DiscountService conforme abaixo:
@@ -1524,5 +1524,7 @@ Atualizar o endpoint para DiscountService conforme abaixo:
 
 ----
 
-## 
+## 8.12. Obs. Passos não concluídos
+
+Ainda não Descobri como fazer as etapadas do Connected Services(Visual Studio) no visual studio code.
 
